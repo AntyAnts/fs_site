@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+        {%load static%}
+        <link rel="stylesheet" href="{% static 'style.css'%}">
+        <script src='{%static "app.js"%}'></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="head_div">
+            <img class="head_img" src="https://03rk.ru/wp-content/themes/skoraya/i/logo.svg" alt="#">
+        </div>
+        <div class="main_div">
+          <div id = 'popup_card'>
+            <div id="popup_content">
+              <form action="/write_card", method="POST">
+                {%csrf_token%}
+                <div class="inp_name">
+                    <div class="input-group input-group-sm mb-3">
+                      <span class="input-group-text inp1" id="inputGroup-sizing-sm">Наименование обьекта</span>
+                      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" name="obj_name">
+                    </div>
+                  </div> 
+                  <div class="inp_comment">
+                    <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Комметарий</label>
+                      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="obj_comment"></textarea>
+                    </div>
+                  </div> 
+                  <div class="">
+                    <img id="pin_file" src='{%static "1486564718-paperclip_81529.png"%}'>
+                    <div class="save_btn">
+                        <button type="submit" class="btn btn-outline-danger">Сохранить</button>
+                        <form action="del_card" method="POST">
+                          {%csrf_token%}
+                          <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                        </form>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+          </div>
+            <div class="web_grid">
+                </div>
+                <div class="card_div">
+                      {%for card in cards%}
+                        <div class="product">
+                            {%if card.img_obj == ''%}
+                              <figure>
+                                <h1>{{card_empty_img}}</h1>
+                              <img class="img_build" src='{%static "png-transparent-architectural-engineering-building-symbol-business-construction-building-photography-logo-removebg-preview.png"%}' alt ='{%static "png-transparent-architectural-engineering-building-symbol-business-construction-building-photography-logo-removebg-preview.png"%}' class="product-image">
+                              </figure>
+                            {%elif card.img_obj%}
+                              <figure>
+                              <img class="img_build" src='{{card.img_obj.url}}' class="product-image">
+                              </figure>
+                            {%endif%}
+                            <div class="product-description">
+                      
+                              <div class="info">
+                                <h1>{{card.title}}</h1>
+                                <p>
+                                  {{card.comment}}
+                                </p>
+                              </div>
+                      
+                            </div>
+                      
+                            <div class="product-sidebar" id="id1">
+                              <button class="buy">
+                                <span>Изображение</span>
+                              </button>
+                      
+                              <button class="info">
+                                <span>Информация</span>
+                              </button>
+                      
+                        
+                      
+                            </div>
+                          </div>
+                      {%endfor%}
+                          <button id = 'plus_cr'>
+                            <div class="plus_card" id="plus1">
+                              <img class ='plus_img' src='{%static "394-3940861_red-plus-sign-icon-to-indicate-how-the.png"%}'>
+                            </div>
+                          </button>
+                          </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

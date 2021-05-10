@@ -1,0 +1,14 @@
+{
+  "name": "fs1",
+  "version": "1.0.0",
+  "description": "siteBuild",
+  "main": "app.js",
+  "scripts": {
+    "test": "alert"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "compile-sass": "^1.1.3"
+  }
+}
