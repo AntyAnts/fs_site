@@ -8,6 +8,7 @@
   width: 100%;
   margin-top: 5em;
 }
+
 #popup_card{
   display: none; 
   position: fixed; 
@@ -33,6 +34,40 @@
   align-items: center;
   overflow-y: scroll;
   margin: 15% auto;
+}
+#popup_info_p{
+  display: none; 
+  position: fixed; 
+  z-index: 3; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4);
+  align-items: center;
+}
+#popup_info_c{
+  background-color:white;
+  border: solid #f37353;
+  z-index: 3;
+  width: 90%;
+  min-height: fit-content;
+  max-height: fit-content;
+  border-radius: 2em;
+  overflow: hidden;
+  align-items: center;
+  overflow-y: scroll;
+  margin: 15% auto;
+}
+.grid_layout_info{
+  display: grid;
+  grid-template-columns: 50%;
+  grid-template-rows: 2fr;
+  grid-row-gap: 1em;
+  margin-left: 1em;
+  margin-top: 5px;
 }
 .head_div{
   height: 200px;
