@@ -26,7 +26,7 @@
                   </div> 
                   <div class="inp_comment">
                     <div class="form-group">
-                      <label for="exampleFormControlTextarea1">Комметарий</label>
+                      <label for="exampleFormControlTextarea1">Комментарий</label>
                       <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="obj_comment"></textarea>
                     </div>
                   </div> 
@@ -35,7 +35,7 @@
                     <div class="save_btn">
                         <button type="submit" class="btn btn-outline-danger">Сохранить</button>
                         <form action="del_card" method="POST">
-                          {%csrf_token%}
+                          
                           <button type="submit" class="btn btn-outline-danger">Удалить</button>
                         </form>
                   </div>
@@ -47,14 +47,29 @@
             <div class="popup_info_content" id="popup_info_c">
               <div class="grid_layout_info">
                 <div class="form-floating">
-                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea1"></textarea>
                   <label for="floatingTextarea">Наименование</label>
                 </div>
                 <div class="form-floating">
-                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"></textarea>
                   <label for="floatingTextarea">Комментарий</label>
                 </div>
+                
               </div>
+              <div class="button_popup_info_delete">
+                <button type="submit" class="btn btn-outline-danger" style="float:right;margin-right:1em;margin-bottom:1em;" onclick="deleteCard()">
+                  Удалить
+                </button>
+              </div>
+              {% block content %}
+                <form action ='upload' method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <input type="file" name="document">
+                  <button type="submit">Upload</button>
+                </form>
+
+                
+              {% endblock %}
               </div>
             </div>
         </div>
@@ -89,21 +104,9 @@
                                 <span>Изображение</span>
                               </button>
                       
-                              <button class="info" id="btn_info", onclick="disp_info()">
+                              <button class="info" id={{card.id}} onclick=disp_info(this.id)>
                                 <span>Информация</span>
                               </button>
-                              <script>
-                                  function disp_info(){
-                                    document.getElementById('popup_info_p').style.display = 'block'
-                                    var i = "{{dict_cards}}"
-                                    alert(i)
-                                  }
-                              
-                                  
-                              </script>
-                      
-                        
-                      
                             </div>
                           </div>
                       {%endfor%}
