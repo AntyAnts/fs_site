@@ -35,7 +35,7 @@
                     <div class="save_btn">
                         <button type="submit" class="btn btn-outline-danger">Сохранить</button>
                         <form action="del_card" method="POST">
-                          
+
                           <button type="submit" class="btn btn-outline-danger">Удалить</button>
                         </form>
                   </div>
@@ -54,22 +54,23 @@
                   <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"></textarea>
                   <label for="floatingTextarea">Комментарий</label>
                 </div>
-                
+                <div id="file_list"></div>
+                <ul id="file_list_ul">
+
+                </ul>
               </div>
               <div class="button_popup_info_delete">
                 <button type="submit" class="btn btn-outline-danger" style="float:right;margin-right:1em;margin-bottom:1em;" onclick="deleteCard()">
                   Удалить
                 </button>
+                <div>
+                  <input id='file_inp' type="file">
+                  <img id="file_inp_pin" onclick= loadFiles(this.id) src='{%static "1486564718-paperclip_81529.png"%}'>
+                </div>
+                <div id="file_list">
+                  <p></p>
+                </div>
               </div>
-              {% block content %}
-                <form action ='upload' method="POST" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <input type="file" name="document">
-                  <button type="submit">Upload</button>
-                </form>
-
-                
-              {% endblock %}
               </div>
             </div>
         </div>

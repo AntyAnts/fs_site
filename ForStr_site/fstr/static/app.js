@@ -42,10 +42,21 @@ function disp_info(click_id){
   }
   getReqCard()
     .then(data =>{
-        resp = JSON.parse(data)
+        resp = JSON.parse(data['resp'])
         console.log(resp);
       document.getElementById('floatingTextarea1').innerHTML = resp[0].fields.title
       document.getElementById('floatingTextarea2').innerHTML = resp[0].fields.comment
+      console.log(data);
+      files_list = JSON.parse(data['files'])
+      console.log(files_list['list_files']);
+      for(f of files_list['list_files']){
+        const ls_e = document.createElement('li')
+        const lnk_fl = document.createElement('a')
+        const a_text = document.createTextNode(String(f))
+        lnk_fl.appendChild(a_text)
+        lnk_fl.setAttribute('href',f)
+        document.querySelector('#file_list_ul').appendChild(ls_e).appendChild(lnk_fl)
+      }
     })
   //   .then(resp_ans =>{
   //   document.getElementById('floatingTextarea').innerHTML = '{{thisCard.title}}'
@@ -62,4 +73,30 @@ async function deleteCard(){
   }).then(()=>{
     location.reload()
   })
+}
+function loadFiles(click_id){
+  const inp = document.querySelector('#file_inp')
+  const img = document.querySelector('#file_inp_pin')
+  const title_name = document.querySelector('#floatingTextarea1').innerHTML
+  const formDat = new FormData()
+  img.onclick = function(){
+    inp.click()
+  }
+  async function loadOnServer(file){
+    formDat.append('media',file)
+    formDat.append('title',title_name)
+    console.log(formDat);
+    const response = await fetch('upload',{
+      method:'POST',
+      body:formDat,
+      headers:{
+        "X-Requested-With": "XMLHttpRequest"
+      },
+    }).then(data=>{
+      console.log(data);
+    })
+    return response
+  }
+  const file_selected = () => loadOnServer(inp.files[0])
+  inp.addEventListener("change",file_selected,false)
 }

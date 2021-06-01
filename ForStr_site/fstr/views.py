@@ -4,9 +4,12 @@ from django.urls.resolvers import LocaleRegexDescriptor
 from .models import Str_obj
 from django.conf import settings
 from django.core import serializers
-from .forms import FileUpl
+from django.core.files.storage import FileSystemStorage, Storage
+
+
 def index(request): 
    cards = Str_obj.objects.all()
+   
    return render(request,'index.html',{'cards':cards})
 def write_card(request):
     try:
@@ -35,12 +38,34 @@ def get_card(request):
         cards = Str_obj.objects.all()
         for card in cards:
             if card.id == int(resp_data['obj_id']):
-                resp = serializers.serialize('json',[card,])
-                return HttpResponse(json.dumps(resp))
+                folder = "file_folder/"+str(card.id)
+                fs = FileSystemStorage(location=folder,base_url=folder)
+                print(fs.exists(folder))
+                if fs.exists(folder):
+                    fs_urls = []
+                    for f in fs.listdir("")[1]:
+                        fs_urls.append(fs.url(f))
+                
+                    resp = serializers.serialize('json',[card,])
+                    fs_f = json.dumps({'list_files':fs_urls})
+                    return HttpResponse(json.dumps({'resp':resp,'files':fs_f}))
+                else:
+                    resp = serializers.serialize('json',[card,])
+                    return HttpResponse(json.dumps({'resp':resp}))
+
 def upload(request):
     if request.method == 'POST':
-        res = request.FILES
-        return (print(res))
-    
+        print(request.FILES['media'])
+        print(request.POST['title'])
+        cards = Str_obj.objects.all()
+        for card in cards:
+            if card.title == request.POST['title']:
+                folder = "file_folder/"+ str(card.id)
+                file = request.FILES['media']
+                fs = FileSystemStorage(location=folder,base_url=folder)
+                filename = fs.save(file.name,file)
+                file_url = fs.url(filename)
+                print(file_url)
+                return(HttpResponse('OK'))
     
 # Create your views here.

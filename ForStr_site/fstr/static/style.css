@@ -8,7 +8,10 @@
   width: 100%;
   margin-top: 5em;
 }
-
+#file_inp::-webkit-file-upload-button{
+  display: none;
+  visibility: hidden;
+}
 #popup_card{
   display: none; 
   position: fixed; 
