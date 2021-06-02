@@ -7,6 +7,7 @@ from django.core import serializers
 from django.core.files.storage import FileSystemStorage, Storage
 
 
+
 def index(request): 
    cards = Str_obj.objects.all()
    
@@ -38,18 +39,17 @@ def get_card(request):
         cards = Str_obj.objects.all()
         for card in cards:
             if card.id == int(resp_data['obj_id']):
-                folder = "file_folder/"+str(card.id)
-                fs = FileSystemStorage(location=folder,base_url=folder)
-                print(fs.exists(folder))
-                if fs.exists(folder):
+                folder = "fstr/static/file_folder/"+ str(card.id)
+                
+                try:
+                    fs = FileSystemStorage(location=folder,base_url=folder)
                     fs_urls = []
                     for f in fs.listdir("")[1]:
                         fs_urls.append(fs.url(f))
-                
                     resp = serializers.serialize('json',[card,])
                     fs_f = json.dumps({'list_files':fs_urls})
                     return HttpResponse(json.dumps({'resp':resp,'files':fs_f}))
-                else:
+                except:
                     resp = serializers.serialize('json',[card,])
                     return HttpResponse(json.dumps({'resp':resp}))
 
@@ -60,7 +60,7 @@ def upload(request):
         cards = Str_obj.objects.all()
         for card in cards:
             if card.title == request.POST['title']:
-                folder = "file_folder/"+ str(card.id)
+                folder = "fstr/static/file_folder/"+ str(card.id)
                 file = request.FILES['media']
                 fs = FileSystemStorage(location=folder,base_url=folder)
                 filename = fs.save(file.name,file)

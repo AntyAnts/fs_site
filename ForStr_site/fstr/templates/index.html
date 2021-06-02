@@ -54,22 +54,19 @@
                   <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"></textarea>
                   <label for="floatingTextarea">Комментарий</label>
                 </div>
+                  <input id='file_inp' type="file" style="display:none">
+                  <img id="file_inp_pin" onclick= loadFiles(this.id) src='{%static "1486564718-paperclip_81529.png"%}'>
+                </div>
                 <div id="file_list"></div>
-                <ul id="file_list_ul">
+					<ul id="file_list_ul">
 
-                </ul>
-              </div>
-              <div class="button_popup_info_delete">
-                <button type="submit" class="btn btn-outline-danger" style="float:right;margin-right:1em;margin-bottom:1em;" onclick="deleteCard()">
+					</ul>
+					<div class="button_popup_info_delete">
+                <button type="submit" class="btn btn-outline-danger" style="float:right;margin-right:1em;margin-bottom:1em;" onclick="deleteCard()" id='btn_del'>
                   Удалить
                 </button>
                 <div>
-                  <input id='file_inp' type="file">
-                  <img id="file_inp_pin" onclick= loadFiles(this.id) src='{%static "1486564718-paperclip_81529.png"%}'>
-                </div>
-                <div id="file_list">
-                  <p></p>
-                </div>
+				</div>
               </div>
               </div>
             </div>
@@ -105,7 +102,7 @@
                                 <span>Изображение</span>
                               </button>
                       
-                              <button class="info" id={{card.id}} onclick=disp_info(this.id)>
+                              <button class="info lnk_info" id={{card.id}} onclick=disp_info(this.id)>
                                 <span>Информация</span>
                               </button>
                             </div>

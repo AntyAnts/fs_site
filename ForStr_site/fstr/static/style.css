@@ -66,6 +66,37 @@
   overflow-y: scroll;
   margin: 15% auto;
 }
+#file_list_ul li{
+	width: fit-content;
+	border: 3px solid #f37353;
+	border-radius: 1px;
+	margin: 3px;
+}
+#file_list_ul{
+	margin:1em;
+}
+#file_list_ul li:hover{
+	background-color: #f37353;
+	transition:300ms;
+}
+#file_inp_pin{
+	opacity: 0.3;
+}
+#file_inp_pin:hover{
+	cursor:pointer;
+	opacity:1;
+	transition:300ms;
+}
+.del_img_ls{
+	width: 30px;
+	height: 30px;
+	opacity: 0.5;
+}
+.del_img_ls:hover{
+	opacity:1;
+	transition:300ms;
+	cursor:pointer;
+}
 .grid_layout_info{
   display: grid;
   grid-template-columns: 50%;
