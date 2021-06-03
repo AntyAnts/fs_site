@@ -61,18 +61,23 @@ function disp_info(click_id){
 		while(ch_ul.lastChild){
 			ch_ul.removeChild(ch_ul.lastChild)
 		}
+	  var itr = 0
       for(f of files_list['list_files']){
         const ls_e = document.createElement('li')
         const lnk_fl = document.createElement('a')
-        const a_text = document.createTextNode(String(f.slice(27)))
+        const a_text = document.createTextNode(decodeURI(String(f.slice(27))))
 		const img_del = document.createElement('img')
 		img_del.setAttribute('src','/static/delete-sign.png')
 		img_del.setAttribute('class','del_img_ls')
+		img_del.setAttribute('id','del_img_ls_id'+String(itr))
+		img_del.addEventListener('click',deleteFile)
         lnk_fl.appendChild(a_text)
         lnk_fl.setAttribute('href',f.substr(4))
 		lnk_fl.setAttribute('target','blank')
+		lnk_fl.setAttribute('class','a_arr_li')
         document.querySelector('#file_list_ul').appendChild(ls_e).appendChild(lnk_fl)
 		ls_e.appendChild(img_del)
+		itr++
       }
 	}catch(e){
 		const ch_ul = document.querySelector('#file_list_ul')
@@ -152,18 +157,22 @@ function updateAfterLoad(){
 		while(ch_ul.lastChild){
 			ch_ul.removeChild(ch_ul.lastChild)
 		}
+	  var itr = 0
       for(f of files_list['list_files']){
         const ls_e = document.createElement('li')
         const lnk_fl = document.createElement('a')
-        const a_text = document.createTextNode(String(f.slice(27)))
+        const a_text = document.createTextNode(decodeURI(String(f.slice(27))))
 		const img_del = document.createElement('img')
 		img_del.setAttribute('src','/static/delete-sign.png')
 		img_del.setAttribute('class','del_img_ls')
+		img_del.setAttribute('id','del_img_ls_id'+String(itr))
+		img_del.addEventListener('click',deleteFile)
         lnk_fl.appendChild(a_text)
         lnk_fl.setAttribute('href',f.substr(4))
 		lnk_fl.setAttribute('target','blank')
         document.querySelector('#file_list_ul').appendChild(ls_e).appendChild(lnk_fl)
 		ls_e.appendChild(img_del)
+		itr++
       }
 	}catch(e){
 		const ch_ul = document.querySelector('#file_list_ul')
@@ -174,3 +183,56 @@ function updateAfterLoad(){
     })
 	
 }
+async function deleteFile(event){
+	const gt_file = document.getElementById(String(event.target.id))
+	formDat = new FormData()
+	formDat.append('id',id_btn)
+	formDat.append('file',gt_file.parentElement.innerText)
+	const response = await fetch('delete_file',{
+		method:"POST",
+		headers:{
+			"X-Requested-With": "XMLHttpRequest"
+		},
+		body:formDat
+	}).then((data)=>{
+		console.log(data.status)
+		if (data.status == 200){
+			gt_file.parentElement.remove()
+		}
+	})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

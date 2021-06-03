@@ -5,7 +5,8 @@ from .models import Str_obj
 from django.conf import settings
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage, Storage
-
+from django.core.files.storage import default_storage
+from urllib.parse import unquote
 
 
 def index(request): 
@@ -67,5 +68,24 @@ def upload(request):
                 file_url = fs.url(filename)
                 print(file_url)
                 return(HttpResponse('OK'))
+                
+def delete_file(request):
+    if request.method == "POST":
+        
+        for obj in Str_obj.objects.all():
+            print(obj.id)
+            print(str(request.POST['id']))
+            if str(obj.id) == str(request.POST['id']):
+                print('OK')
+                folder = "fstr/static/file_folder/"+ str(obj.id)
+                fs = FileSystemStorage(location=folder,base_url=folder)
+                print(fs.listdir('')[1])
+                for f in fs.listdir('')[1]:
+                    print(f)
+                    if str(f) == unquote(str(request.POST['file'])):
+                        default_storage.delete("fstr/static/file_folder/"+ str(obj.id) + '/' + unquote(str(request.POST['file'])))
+                        print('OK')
+                        return HttpResponse('OK')
+           
     
 # Create your views here.
