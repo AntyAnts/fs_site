@@ -1,5 +1,6 @@
+import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.urls.resolvers import LocaleRegexDescriptor 
 from .models import Str_obj
 from django.conf import settings
@@ -86,6 +87,54 @@ def delete_file(request):
                         default_storage.delete("fstr/static/file_folder/"+ str(obj.id) + '/' + unquote(str(request.POST['file'])))
                         print('OK')
                         return HttpResponse('OK')
-           
+def set_coords(request):
+    if request.method == "POST":
+        coords = request.POST['coords'].split(',')
+        cards = Str_obj.objects.all()
+        for card in cards:
+            if str(card.id) == str(request.POST['id']):
+                card.coords = request.POST['coords'].split(',')
+                card.save()
+                return HttpResponse('ok')
+def get_coords(request):
+    if request.method == "POST":
+        import json
+        cards = Str_obj.objects.all()
+        for card in cards:
+            if str(card.id) == str(request.POST['id']):
+                return HttpResponse(json.dumps(card.coords))      
+def change_title(request):
+    if request.method == "POST":
+        cards = Str_obj.objects.all()
+        print(request.POST['title'])
+        for card in cards:
+            if str(card.id) == str(request.POST['id']):
+                card.title = str(request.POST['title'])
+                card.comment = str(request.POST['comment'])
+                card.save()
+                print(card.title)
+                return(redirect('/'))
+def send_photo(request):
+    if request.method == 'POST':
+        print(request.FILES['file'])
+        cards = Str_obj.objects.all()
+        for card in cards:
+            if str(card.id) == str(request.POST['id']):
+                print("OK OK OK OK OK")
+                folder = "fstr/static/file_folder/"+ str(card.id) + "/" + "img"
+                file = request.FILES['file']
+                fs = FileSystemStorage(location=folder,base_url=folder)
+                filename = fs.save(file.name,file)
+                file_url = fs.url(filename)
+                card.img_url = file_url[4:]
+                card.save()
+                print(card.img_url)
+                return HttpResponse('ok')
+def get_photo(request):
+    if request.method == 'POST':
+        cards = Str_obj.objects.all()
+        for card in cards:
+            if str(card.id) == str(request.POST['id']):
+                return HttpResponse(json.dumps(card.img_url))
     
 # Create your views here.

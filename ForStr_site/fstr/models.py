@@ -15,6 +15,8 @@ class Str_obj(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
     img_obj = models.ImageField(upload_to = 'img_obj',max_length = 500, blank=True)
     files_ls = models.FileField(upload_to='documents',default='some text')
+    coords = models.CharField(max_length=100)
+    img_url = models.URLField(max_length=100)
 
 
 

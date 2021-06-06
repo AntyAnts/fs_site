@@ -4,6 +4,7 @@ window.onload = function(){
   var div_lnk = document.getElementById('popup_card');
   var btn_conf = document.getElementsByClassName('save_btn')[0];
   var div_info = document.getElementById('popup_info_p')
+  var div_photo = document.getElementById('photo')
   console.log(class_lnk);
   console.log(btn_lnk);
   btn_lnk.onclick = function(){
@@ -12,9 +13,14 @@ window.onload = function(){
   window.onclick = function(event) {
     if (event.target == div_lnk) {
       div_lnk.style.display = "none";
+
     }
     else if (event.target == div_info){
       div_info.style.display = 'none';
+      
+    }
+    else if (event.target == div_photo){
+      div_photo.style.display = 'none'
     }
   }
 }
@@ -31,6 +37,9 @@ var del_btn
 var id_btn
 function disp_info(click_id){
   document.getElementById('popup_info_p').style.display = 'block'
+  setTimeout(()=>{
+    document.getElementById('photo').style.display = 'none'
+  },0)
   del_btn = document.querySelector("#btn_del")
   del_btn.id = click_id
   id_btn = del_btn.id
@@ -80,12 +89,19 @@ function disp_info(click_id){
 		itr++
       }
 	}catch(e){
+    console.log(e);
 		const ch_ul = document.querySelector('#file_list_ul')
 		while(ch_ul.lastChild){
 			ch_ul.removeChild(ch_ul.lastChild)
 		}
 		return(console.log('В данном обьекте нет файлов'))}
-    })
+    try{
+      c_ind = 0
+      document.querySelector('ymaps').remove()
+      document.getElementById('map').style.display = 'none'
+      }
+      catch(e){}  
+  })
   //   .then(resp_ans =>{
   //   document.getElementById('floatingTextarea').innerHTML = '{{thisCard.title}}'
   // })
@@ -201,11 +217,179 @@ async function deleteFile(event){
 		}
 	})
 }
+var myMap
+var coords
+var c_ind = 0
+function showMap(){
+  const r = new RegExp('\d')
+  getCoords().then(data =>{
+    console.log(data);
+    try{
+      var res = JSON.parse(data.replaceAll("'",""));
+    }
+    catch(e){
+      console.log("Не указана точка геолокации для обьекта");
+    }
 
-
-
-
-
+  document.getElementById('map').style.display = 'block'
+  
+  if (c_ind % 2 == 0){
+  ymaps.ready(init)
+  function init(){
+      // Создание карты.
+        if(res) {
+        myMap = new ymaps.Map("map", {
+          // Координаты центра карты.
+          // Порядок по умолчанию: «широта, долгота».
+          // Чтобы не определять координаты центра карты вручную,
+          // воспользуйтесь инструментом Определение координат.
+          center: res,
+          
+          // Уровень масштабирования. Допустимые значения:
+          // от 0 (весь мир) до 19.
+          zoom: 10});
+        }else{
+          myMap = new ymaps.Map("map", {
+            // Координаты центра карты.
+            // Порядок по умолчанию: «широта, долгота».
+            // Чтобы не определять координаты центра карты вручную,
+            // воспользуйтесь инструментом Определение координат.
+            center: [44.948239, 34.100325],
+            
+            // Уровень масштабирования. Допустимые значения:
+            // от 0 (весь мир) до 19.
+            zoom: 10});
+        }
+          if(res){
+            myMap.geoObjects.add(new ymaps.Placemark(res,{
+              balloonContent: String(document.getElementById('floatingTextarea1').innerHTML)
+            }))
+          }else{
+            myMap.geoObjects.add(new ymaps.Placemark([44.948239, 34.100325],{
+              balloonContent: String(document.getElementById('floatingTextarea1').innerHTML)
+          }))}
+          myMap.events.add('click',function(e){
+              coords = e.get('coords')
+            if(!myMap.balloon.isOpen()){
+              myMap.balloon.open(coords,{
+              contentHeader:'Назначить геометку в данной точке ?',
+              contentBody:"<button class='btn btn-outline-danger' type='submit' style='margin-bottom:1em;margin-left:1em;' onclick='setCoords(coords,myMap)'>Да</button>"
+              
+            })
+          }else{
+            myMap.balloon.close()
+          }
+          return [coords,myMap]})
+      c_ind++
+      console.log(c_ind);
+  }
+}else{
+  document.querySelector('ymaps').remove()
+  document.getElementById('map').style.display = 'none'
+  c_ind++
+}
+})
+}
+async function setCoords(coords){
+  myMap.geoObjects.add(new ymaps.Placemark(coords,{
+    balloonContent: String(document.getElementById('floatingTextarea1').innerHTML)
+  }))
+  myMap.balloon.close()
+  formdat = new FormData()
+  formdat.append('coords',coords)
+  formdat.append('id',id_btn)
+  const response = await fetch('set_coords',{
+    method:'POST',
+    headers:{
+      "X-Requested-With": "XMLHttpRequest"
+    },
+    body:formdat
+  })
+}
+async function getCoords(){
+  formDat = new FormData()
+  formDat.append('id',id_btn)
+  const response = await fetch('get_coords',{
+    method: "POST",
+    headers:{
+      "X-Requested-With": "XMLHttpRequest"
+    },
+    body:formDat
+  })
+  return response.json()
+}
+async function changeTitleComment(){
+  const formDat = new FormData()
+  const title = document.getElementById('floatingTextarea1').value
+  const comment = document.getElementById('floatingTextarea2').value
+  formDat.append('title',title)
+  formDat.append('comment',comment)
+  formDat.append('id',id_btn)
+  console.log(document.getElementById('floatingTextarea1').value);
+  const person = await fetch('change_title',{
+    method:'POST',
+    headers:{
+      "X-Requested-With": "XMLHttpRequest"
+    },
+    body:formDat
+  }).then(data=>{
+    console.log(data);
+    location.reload()
+  })
+}
+var id_ph
+function showPhoto(id){
+  document.getElementById('photo').style.display = 'block'
+  id_ph = id
+  console.log(id_ph);
+  getPhoto().then(
+    data =>{
+      console.log(data)
+      document.getElementById('photo_loaded').setAttribute('src',data)
+    }
+  )
+}
+setTimeout(() =>{
+btn_upl = document.getElementById('load_photo')
+inp_photo = document.getElementById('inp_photo')
+btn_upl.addEventListener('click',function(){
+  inp_photo.click()
+})
+inp_photo.addEventListener('change',sendPhoto,false)
+},1000)
+  async function sendPhoto(){
+    console.log(inp_photo.files[0].name);
+    const formDat = new FormData()
+    const file = inp_photo.files[0]
+    if(file.name.split('.').pop() === 'png'||file.name.split('.').pop() === 'svg'||file.name.split('.').pop() === 'jpg'||file.name.split('.').pop() === 'jpeg'||file.name.split('.').pop() === 'gif'){
+    formDat.append('file',file)
+    formDat.append('id',id_ph)
+    const response = await fetch('send_photo',{
+      method:'POST',
+      headers:{
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body:formDat
+    }).then(data =>{
+      console.log(data);
+      location.reload()
+    })
+  }else{
+    console.log('Неверный формат файла');
+  }
+  }
+async function getPhoto(){
+  const formdat = new FormData()
+  formdat.append('id',id_ph)
+  const response = await fetch('get_photo',{
+    method:'POST',
+    headers:{
+      "X-Requested-With": "XMLHttpRequest"
+    },
+    body:formdat
+  })
+  return response.json()
+}
 
 
 
